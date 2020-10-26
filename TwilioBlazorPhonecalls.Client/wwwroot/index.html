@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>TwilioBlazorPhonecalls.Client</title>
+    <base href="/" />
+    <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" />
+    <link href="css/app.css" rel="stylesheet" />
+    <script src="https://sdk.twilio.com/js/client/v1.12/twilio.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script>
+        window.dialer = {
+            device: new Twilio.Device(),
+            connection: null,
+            dotNetObjectReference: null,
+            setDotNetObjectReference: function (dotNetObjectReference) {
+                this.dotNetObjectReference = dotNetObjectReference;
+            },
+            setupTwilioDevice: function (jwtToken) {
+                this.device.setup(jwtToken, { debug: true });
+            },
+            setupTwilioCallbacks: function () {
+                var self = this;
+                this.device.on('ready', function (device) {
+                    self.dotNetObjectReference.invokeMethod('OnTwilioDeviceReady');
+                });
+
+                this.device.on('error', function (error) {
+                    console.error(error);
+                    self.dotNetObjectReference.invokeMethod('OnTwilioDeviceError', error.message);
+                });
+
+                this.device.on('connect', function (connection) {
+                    self.connection = connection;
+                    if (connection.direction === "OUTGOING") {
+                        self.dotNetObjectReference.invokeMethod('OnTwilioDeviceConnected', connection.message['To']);
+                    } else {
+                        self.dotNetObjectReference.invokeMethod('OnTwilioDeviceConnected', connection.parameters['From']);
+                    }
+                });
+
+                this.device.on('disconnect', function (connection) {
+                    self.dotNetObjectReference.invokeMethod('OnTwilioDeviceDisconnected');
+                });
+
+                this.device.on('incoming', function (connection) {
+                    self.connection = connection;
+                    self.dotNetObjectReference.invokeMethod('OnTwilioDeviceIncomingConnection');
+                });
+
+                this.device.on('cancel', function (connection) {
+                    self.connection = connection;
+                    self.dotNetObjectReference.invokeMethod('OnTwilioDeviceCanceled');
+                });
+
+                this.device.on('cancel', function (connection) {
+                    self.connection = connection;
+                    self.dotNetObjectReference.invokeMethod('OnTwilioDeviceCanceled');
+                });
+            },
+            startCall: function (phoneNumber) {
+                this.connection = this.device.connect({ "To": phoneNumber });
+            },
+            endCall: function () {
+                if (this.connection) {
+                    this.connection.disconnect();
+                }
+            },
+            acceptCall: function () {
+                if (this.connection) {
+                    this.connection.accept();
+                }
+            },
+            rejectCall: function () {
+                if (this.connection) {
+                    this.connection.reject();
+                }
+            },
+            destroy: function (){
+                this.device.destroy();
+            }
+        };
+    </script>
+</head>
+
+<body>
+    <app>Loading...</app>
+
+    <div id="blazor-error-ui">
+        An unhandled error has occurred.
+        <a href="" class="reload">Reload</a>
+        <a class="dismiss">🗙</a>
+    </div>
+    <script src="_framework/blazor.webassembly.js"></script>
+</body>
+
+</html>
