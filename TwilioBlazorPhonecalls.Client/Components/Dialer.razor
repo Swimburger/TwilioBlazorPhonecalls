@@ -1,0 +1,208 @@
+@using Microsoft.Extensions.Logging
+@using Microsoft.Extensions.Configuration
+@using System.Text.RegularExpressions
+@implements IAsyncDisposable
+@inject IConfiguration configuration
+@inject IJSRuntime jsRuntime
+@inject ILogger<Dialer> logger
+
+<div class="dialer 
+    @(hasIncomingConnection || isTwilioDeviceConnected ? "dialer--show-top" : "") 
+    @(hasIncomingConnection ? "dialer--incoming-call" : "") 
+    @(showDialer ? "dialer--show" : "dialer--hide")">
+    <button 
+        class="show-hide-button btn @(showDialer ? "btn-secondary" : "btn-success")" 
+        @onclick="@(() => showDialer = !showDialer)">
+        @(showDialer ? "hide" : "show") phone <span class="oi oi-phone"></span>
+    </button>
+    <p class="text-center text-light">@(message != "" ?message : "Standing by")</p>
+    <div class="input-group w-100 mb-3">
+        <input 
+            @bind="dialNumber" 
+            @bind:event="oninput"
+            disabled="@(!isTwilioDeviceReady || isTwilioDeviceConnected || hasIncomingConnection)" 
+            type="@(enablePrivacyMode ? "password" : "text")" 
+            class="form-control text-center" 
+            placeholder="Phonenumber">
+        <div class="input-group-append">
+            <button 
+                @onclick="RemoveKey" 
+                disabled="@(!isTwilioDeviceReady || isTwilioDeviceConnected || hasIncomingConnection || dialNumber.Length == 0)" 
+                class="btn btn-outline-secondary" 
+                type="button"><span
+                class="oi oi-delete"></span></button>
+        </div>
+    </div>
+    <div class="dial-pad clearfix w-100 mb-3">
+        @foreach (var dialKey in dialKeys)
+        {
+            <button @onclick="() => PressKey(dialKey)" class="btn btn-dark" type="button">@dialKey</button>
+        }
+    </div>
+    <div class="btn-group w-100">
+        @if(hasIncomingConnection){
+            <button 
+                @onclick="RejectCall" 
+                type="button" 
+                class="btn btn-danger w-50"
+                >Reject</button>
+            <button 
+                @onclick="AcceptCall" 
+                type="button" 
+                class="btn btn-success w-50"
+                >Accept</button>
+        }else{
+            <button 
+                @onclick="EndCall" 
+                disabled="@(!isTwilioDeviceReady || !isTwilioDeviceConnected)" 
+                type="button" 
+                class="btn btn-danger w-50"
+                >Hang up</button>
+            <button 
+                @onclick="StartCall" 
+                disabled="@(!isTwilioDeviceReady || isTwilioDeviceConnected || dialNumber.Length == 0)" 
+                type="button" 
+                class="btn btn-success w-50"
+                >Call</button>
+        }
+    </div>
+</div>
+    @code{
+    private static readonly HttpClient httpClient = new HttpClient();
+    private static readonly string dialKeys = "123456789*0#";
+    private bool enablePrivacyMode = false;
+    private DotNetObjectReference<Dialer> dotNetObjectReference;
+    private bool showDialer = false;
+    private string message = "";
+    private string dialNumber = "";
+    private bool isTwilioDeviceReady = false;
+    private bool isTwilioDeviceConnected = false;
+    private bool hasIncomingConnection = false;
+
+    private void PressKey(char key)
+    {
+        dialNumber += key;
+    }
+
+    private void RemoveKey()
+    {
+        dialNumber = dialNumber.Remove(dialNumber.Length - 1);
+    }
+
+    private async Task StartCall()
+    {
+        await jsRuntime.InvokeVoidAsync("dialer.startCall", dialNumber);
+    }
+
+    private async Task EndCall()
+    {
+        await jsRuntime.InvokeVoidAsync("dialer.endCall");
+    }
+
+    private async Task RejectCall()
+    {
+        hasIncomingConnection = false;
+        message = "";
+        await jsRuntime.InvokeVoidAsync("dialer.rejectCall");
+    }
+
+    private async Task AcceptCall()
+    {
+        await jsRuntime.InvokeVoidAsync("dialer.acceptCall");
+    }
+
+    [JSInvokable]
+    public void OnTwilioDeviceReady()
+    {
+        isTwilioDeviceReady = true;
+        StateHasChanged();
+    }
+
+    [JSInvokable]
+    public void OnTwilioDeviceError(string error)
+    {
+        message = error;
+        logger.LogError(error);
+        StateHasChanged();
+    }
+
+    [JSInvokable]
+    public void OnTwilioDeviceConnected(string phoneNumber)
+    {
+        isTwilioDeviceConnected = true;
+        hasIncomingConnection = false;
+        if(enablePrivacyMode){
+            phoneNumber = MaskPhoneNumber(phoneNumber);
+        }
+        message = $"Calling {phoneNumber}";
+        StateHasChanged();
+    }
+
+    [JSInvokable]
+    public void OnTwilioDeviceDisconnected()
+    {
+        isTwilioDeviceConnected = false;
+        hasIncomingConnection = false;
+        message = "";
+        StateHasChanged();
+    }
+
+    [JSInvokable]
+    public void OnTwilioDeviceIncomingConnection(string phoneNumber)
+    {
+        hasIncomingConnection = true;
+        if(enablePrivacyMode){
+            phoneNumber = MaskPhoneNumber(phoneNumber);
+        }
+        message = $"{phoneNumber} is calling you";
+        StateHasChanged();
+    }
+
+    
+    [JSInvokable]
+    public void OnTwilioDeviceCanceled()
+    {
+        hasIncomingConnection = false;
+        message = "";
+        StateHasChanged();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        enablePrivacyMode = configuration.GetValue<bool>("EnablePrivacyMode");
+        dotNetObjectReference = DotNetObjectReference.Create(this);
+
+        await jsRuntime.InvokeVoidAsync("dialer.setDotNetObjectReference", dotNetObjectReference);
+        await jsRuntime.InvokeVoidAsync("dialer.setupTwilioEvents");
+
+        var apiServerUrl = configuration["ApiServerUrl"];
+        var jwtToken = await httpClient.GetStringAsync($"{apiServerUrl}/token");
+        await jsRuntime.InvokeVoidAsync("dialer.setupTwilioDevice", jwtToken);
+    }
+
+    private static string MaskPhoneNumber(string phoneNumber){
+        bool maskFully = true;
+        if(maskFully)
+        {
+            return "**********";
+        }
+        
+        Match match = Regex.Match(phoneNumber, @"(?:\+\d)?(\d*)\d{4}$");
+        if(match.Groups.Count != 2)
+        {
+            // if regex fails, fallback to 10 *
+            return "**********";
+        }
+
+        string partToMask = match.Groups[1].Value;
+        string partToReplaceWith = new string('*', partToMask.Length);
+        phoneNumber = phoneNumber.Replace(partToMask, partToReplaceWith);
+        return phoneNumber;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await jsRuntime.InvokeVoidAsync("dialer.destroy");
+        dotNetObjectReference?.Dispose();
+    }
+}
