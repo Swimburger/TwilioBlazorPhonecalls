@@ -27,7 +27,6 @@ namespace TwilioBlazorPhonecalls.Server.Controllers
             string twilioAccountSid = configuration["TwilioAccountSid"];
             string twilioAuthToken =  configuration["TwilioAuthToken"];
             string twiMLApplicationSid =  configuration["TwiMLApplicationSid"];
-            string twilioPhoneNumber =  configuration["TwilioPhoneNumber"];
 
             HashSet<IScope> scopes = new HashSet<IScope>
             {
