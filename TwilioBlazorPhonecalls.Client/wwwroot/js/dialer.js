@@ -1,16 +1,20 @@
 window.dialer = {
     device: new Twilio.Device(),
-    connection: null,
     dotNetObjectReference: null,
     setDotNetObjectReference: function (dotNetObjectReference) {
         this.dotNetObjectReference = dotNetObjectReference;
     },
     setupTwilioDevice: function (jwtToken) {
-        this.device.setup(jwtToken);
+        var options = {
+            closeProtection: true // will warn user if you try to close browser window during an active call
+        };
+        this.device.setup(jwtToken, options);
     },
     setupTwilioEvents: function () {
+        // inside of Twilio events scope the 'this' context is redefined and will not point to 'window.dialer'
+        // the variable 'self' is introduced to conveniently access the 'this' context from the outer scope inside of the events scope
         var self = this;
-        this.device.on('ready', function (device) {
+        this.device.on('ready', function () {
             self.dotNetObjectReference.invokeMethod('OnTwilioDeviceReady');
         });
 
@@ -20,7 +24,6 @@ window.dialer = {
         });
 
         this.device.on('connect', function (connection) {
-            self.connection = connection;
             if (connection.direction === "OUTGOING") {
                 self.dotNetObjectReference.invokeMethod('OnTwilioDeviceConnected', connection.message['To']);
             } else {
@@ -28,36 +31,37 @@ window.dialer = {
             }
         });
 
-        this.device.on('disconnect', function (connection) {
+        this.device.on('disconnect', function () {
             self.dotNetObjectReference.invokeMethod('OnTwilioDeviceDisconnected');
         });
 
         this.device.on('incoming', function (connection) {
-            self.connection = connection;
             self.dotNetObjectReference.invokeMethod('OnTwilioDeviceIncomingConnection', connection.parameters['From']);
         });
 
-        this.device.on('cancel', function (connection) {
-            self.connection = connection;
+        this.device.on('cancel', function () {
             self.dotNetObjectReference.invokeMethod('OnTwilioDeviceCanceled');
         });
     },
     startCall: function (phoneNumber) {
-        this.connection = this.device.connect({ "To": phoneNumber });
+        this.device.connect({ "To": phoneNumber });
     },
     endCall: function () {
-        if (this.connection) {
-            this.connection.disconnect();
+        var connection = this.device.activeConnection();
+        if (connection) {
+            connection.disconnect();
         }
     },
     acceptCall: function () {
-        if (this.connection) {
-            this.connection.accept();
+        var connection = this.device.activeConnection();
+        if (connection) {
+            connection.accept();
         }
     },
     rejectCall: function () {
-        if (this.connection) {
-            this.connection.reject();
+        var connection = this.device.activeConnection();
+        if (connection) {
+            connection.reject();
         }
     },
     destroy: function () {

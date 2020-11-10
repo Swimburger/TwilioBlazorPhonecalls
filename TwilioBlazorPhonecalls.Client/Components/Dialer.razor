@@ -1,7 +1,7 @@
 @using Microsoft.Extensions.Logging
 @using Microsoft.Extensions.Configuration
 @using System.Text.RegularExpressions
-@implements IAsyncDisposable
+@implements IDisposable
 @inject IConfiguration configuration
 @inject IJSRuntime jsRuntime
 @inject ILogger<Dialer> logger
@@ -82,15 +82,9 @@
     private bool isTwilioDeviceConnected = false;
     private bool hasIncomingConnection = false;
 
-    private void PressKey(char key)
-    {
-        dialNumber += key;
-    }
+    private void PressKey(char key) => dialNumber += key;
 
-    private void RemoveKey()
-    {
-        dialNumber = dialNumber.Remove(dialNumber.Length - 1);
-    }
+    private void RemoveKey() => dialNumber = dialNumber.Remove(dialNumber.Length - 1);
 
     private async Task StartCall()
     {
@@ -102,16 +96,16 @@
         await jsRuntime.InvokeVoidAsync("dialer.endCall");
     }
 
+    private async Task AcceptCall()
+    {
+        await jsRuntime.InvokeVoidAsync("dialer.acceptCall");
+    }
+
     private async Task RejectCall()
     {
         hasIncomingConnection = false;
         message = "";
         await jsRuntime.InvokeVoidAsync("dialer.rejectCall");
-    }
-
-    private async Task AcceptCall()
-    {
-        await jsRuntime.InvokeVoidAsync("dialer.acceptCall");
     }
 
     [JSInvokable]
@@ -178,9 +172,15 @@
         await jsRuntime.InvokeVoidAsync("dialer.setDotNetObjectReference", dotNetObjectReference);
         await jsRuntime.InvokeVoidAsync("dialer.setupTwilioEvents");
 
+        var jwtToken = await GetTwilioAuthenticationTokenAsync();
+        await jsRuntime.InvokeVoidAsync("dialer.setupTwilioDevice", jwtToken);
+    }
+
+    private async Task<string> GetTwilioAuthenticationTokenAsync()
+    {
         var apiServerUrl = configuration["ApiServerUrl"];
         var jwtToken = await httpClient.GetStringAsync($"{apiServerUrl}/token");
-        await jsRuntime.InvokeVoidAsync("dialer.setupTwilioDevice", jwtToken);
+        return jwtToken;
     }
 
     private static string MaskPhoneNumber(string phoneNumber){
@@ -203,9 +203,11 @@
         return phoneNumber;
     }
 
-    public async ValueTask DisposeAsync()
+    // IAsyncDisposable isn't supported in Blazor .NET Core 3.1, but will be in future versions
+    // for now use IDisposable and fire and forget a task to call dialer.destroy
+    public void Dispose()
     {
-        await jsRuntime.InvokeVoidAsync("dialer.destroy");
+        jsRuntime.InvokeVoidAsync("dialer.destroy");
         dotNetObjectReference?.Dispose();
     }
 }
