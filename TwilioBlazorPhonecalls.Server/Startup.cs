@@ -31,7 +31,7 @@ namespace TwilioBlazorPhonecalls.Server
             {
                 options.AddPolicy(name: BlazorClientPolicyName, builder =>
                 {
-                    builder.WithOrigins("https://localhost:5003");
+                    builder.WithOrigins("https://localhost:5001", "http://localhost:5000");
                 });
             });
 

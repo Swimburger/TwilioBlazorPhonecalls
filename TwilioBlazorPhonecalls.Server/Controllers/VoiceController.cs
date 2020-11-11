@@ -25,29 +25,18 @@ namespace TwilioBlazorPhonecalls.Server.Controllers
         }
 
         [HttpPost]
-        [Route("voice/incoming")]
-        public TwiMLResult Incoming([FromForm] string from)
-        {
-            var response = new VoiceResponse();
-            var dial = new Dial();
-            logger.LogInformation($"Calling blazor_client");
-            dial.CallerId = from;
-            dial.Client("blazor_client");
-            response.Append(dial);
-            return TwiML(response);
-        }
-
-
-        [HttpPost]
         [Route("voice/outgoing")]
         public TwiMLResult Outgoing([FromForm] string to)
         {
             string twilioPhoneNumber = configuration["TwilioPhoneNumber"];
             var response = new VoiceResponse();
             var dial = new Dial();
-            if(enablePrivacyMode){
+            if (enablePrivacyMode)
+            {
                 logger.LogInformation($"Calling {MaskPhoneNumber(to)}");
-            }else{
+            }
+            else
+            {
                 logger.LogInformation($"Calling {to}");
             }
             dial.CallerId = twilioPhoneNumber;
@@ -56,6 +45,27 @@ namespace TwilioBlazorPhonecalls.Server.Controllers
             return TwiML(response);
         }
 
+        [HttpPost]
+        [Route("voice/incoming")]
+        public TwiMLResult Incoming([FromForm] string from)
+        {
+            if (enablePrivacyMode)
+            {
+                logger.LogInformation($"Receiving call from {MaskPhoneNumber(from)}");
+            }
+            else
+            {
+                logger.LogInformation($"Receiving call from {from}");
+            }
+
+            var response = new VoiceResponse();
+            var dial = new Dial();
+            logger.LogInformation($"Calling blazor_client");
+            dial.CallerId = from;
+            dial.Client("blazor_client");
+            response.Append(dial);
+            return TwiML(response);
+        }
 
         private static string MaskPhoneNumber(string phoneNumber)
         {

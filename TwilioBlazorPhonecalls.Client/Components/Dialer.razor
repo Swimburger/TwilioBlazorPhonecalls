@@ -178,8 +178,8 @@
 
     private async Task<string> GetTwilioAuthenticationTokenAsync()
     {
-        var apiServerUrl = configuration["ApiServerUrl"];
-        var jwtToken = await httpClient.GetStringAsync($"{apiServerUrl}/token");
+        var twilioAuthTokenUrl = configuration["TwilioAuthTokenUrl"];
+        var jwtToken = await httpClient.GetStringAsync(twilioAuthTokenUrl);
         return jwtToken;
     }
 
