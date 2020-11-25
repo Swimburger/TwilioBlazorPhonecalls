@@ -7,7 +7,7 @@ $TwilioTunnelsObject = (Invoke-WebRequest "$NgrokApi/tunnels").Content | Convert
 $PublicBaseUrl = $TwilioTunnelsObject.tunnels.public_url | Where-Object {$_.StartsWith('https')};
 
 $PublicOutgoingVoiceUrl = "$PublicBaseUrl/voice/outgoing";
-twilio api:core:applications:update --sid=$ApplicationSid --voice-url=$PublicOutgoingVoiceUrl --voice-method=post;
+twilio api:core:applications:update --sid=$ApplicationSid --voice-url=$PublicOutgoingVoiceUrl --voice-method=POST;
 
 $PublicIncomingVoiceUrl = "$PublicBaseUrl/voice/incoming";
-twilio phone-numbers:update $TwilioPhonenumber --voice-url=$PublicIncomingVoiceUrl --voice-method=post;
+twilio phone-numbers:update $TwilioPhonenumber --voice-url=$PublicIncomingVoiceUrl --voice-method=POST;
