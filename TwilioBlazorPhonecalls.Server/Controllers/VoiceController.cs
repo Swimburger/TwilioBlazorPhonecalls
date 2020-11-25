@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Twilio.AspNet.Core;
+using Twilio.Http;
 using Twilio.TwiML;
 using Twilio.TwiML.Voice;
 
@@ -63,7 +64,29 @@ namespace TwilioBlazorPhonecalls.Server.Controllers
             logger.LogInformation($"Calling blazor_client");
             dial.CallerId = from;
             dial.Client("blazor_client");
+
+            dial.Action = new Uri("/voice/incoming-action", UriKind.Relative);
+            dial.Method = HttpMethod.Post;
+
             response.Append(dial);
+
+
+            return TwiML(response);
+        }
+
+        [HttpPost]
+        [Route("voice/incoming-action")]
+        public TwiMLResult IncomingAction([FromForm] string dialCallStatus)
+        {
+            if(dialCallStatus == "completed" || dialCallStatus == "answered")
+            {
+                return null;
+            }
+
+            var response = new VoiceResponse();
+            response.Say("The person you are trying to reach is unavailable. Leave a message after the beep.");
+            response.Record();
+
             return TwiML(response);
         }
 
