@@ -70,7 +70,6 @@ namespace TwilioBlazorPhonecalls.Server.Controllers
 
             response.Append(dial);
 
-
             return TwiML(response);
         }
 
