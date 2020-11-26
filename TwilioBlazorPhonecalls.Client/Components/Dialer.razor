@@ -169,8 +169,9 @@
     {
         enablePrivacyMode = configuration.GetValue<bool>("EnablePrivacyMode");
         dotNetObjectReference = DotNetObjectReference.Create(this);
-        jsDialer = await js.InvokeAsync<IJSObjectReference>("createDialer");
 
+        var dialerModule = await js.InvokeAsync<IJSObjectReference>("import", "./js/dialer.js");
+        jsDialer = await dialerModule.InvokeAsync<IJSObjectReference>("createDialer");
         await jsDialer.InvokeVoidAsync("setDotNetObjectReference", dotNetObjectReference);
         await jsDialer.InvokeVoidAsync("setupTwilioEvents");
         

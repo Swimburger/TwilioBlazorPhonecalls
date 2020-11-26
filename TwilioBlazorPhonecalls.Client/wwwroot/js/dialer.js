@@ -1,4 +1,4 @@
-window.createDialer = function () {
+export function createDialer () {
     return {
         device: new Twilio.Device(),
         dotNetObjectReference: null,

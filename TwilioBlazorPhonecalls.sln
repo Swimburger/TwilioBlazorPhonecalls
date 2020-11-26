@@ -1,11 +1,21 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26124.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30611.23
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwilioBlazorPhonecalls.Server", "TwilioBlazorPhonecalls.Server\TwilioBlazorPhonecalls.Server.csproj", "{1C43E340-46CE-410D-9F4B-621C278ABF4A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwilioBlazorPhonecalls.Server", "TwilioBlazorPhonecalls.Server\TwilioBlazorPhonecalls.Server.csproj", "{1C43E340-46CE-410D-9F4B-621C278ABF4A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwilioBlazorPhonecalls.Client", "TwilioBlazorPhonecalls.Client\TwilioBlazorPhonecalls.Client.csproj", "{7C535644-58F1-4423-A4E5-2E3F771ACF2F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EB6497D1-C734-4E12-A8CE-C4BA9B132F22}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		ConfigureSecrets.ps1 = ConfigureSecrets.ps1
+		CreateTwilioApplication.ps1 = CreateTwilioApplication.ps1
+		global.json = global.json
+		LICENSE = LICENSE
+		UpdateTwilioWebhooks.ps1 = UpdateTwilioWebhooks.ps1
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,9 +25,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{1C43E340-46CE-410D-9F4B-621C278ABF4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -44,5 +51,11 @@ Global
 		{7C535644-58F1-4423-A4E5-2E3F771ACF2F}.Release|x64.Build.0 = Release|Any CPU
 		{7C535644-58F1-4423-A4E5-2E3F771ACF2F}.Release|x86.ActiveCfg = Release|Any CPU
 		{7C535644-58F1-4423-A4E5-2E3F771ACF2F}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {59996D03-B4AB-4836-8B8B-7684789E2DE4}
 	EndGlobalSection
 EndGlobal
