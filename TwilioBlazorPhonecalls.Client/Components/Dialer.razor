@@ -3,7 +3,7 @@
 @using System.Text.RegularExpressions
 @implements IDisposable
 @inject IConfiguration configuration
-@inject IJSRuntime jsRuntime
+@inject IJSRuntime js
 @inject ILogger<Dialer> logger
 
 <div class="dialer 
@@ -88,24 +88,24 @@
 
     private async Task StartCall()
     {
-        await jsRuntime.InvokeVoidAsync("dialer.startCall", dialNumber);
+        await js.InvokeVoidAsync("dialer.startCall", dialNumber);
     }
 
     private async Task EndCall()
     {
-        await jsRuntime.InvokeVoidAsync("dialer.endCall");
+        await js.InvokeVoidAsync("dialer.endCall");
     }
 
     private async Task AcceptCall()
     {
-        await jsRuntime.InvokeVoidAsync("dialer.acceptCall");
+        await js.InvokeVoidAsync("dialer.acceptCall");
     }
 
     private async Task RejectCall()
     {
         hasIncomingConnection = false;
         message = "";
-        await jsRuntime.InvokeVoidAsync("dialer.rejectCall");
+        await js.InvokeVoidAsync("dialer.rejectCall");
     }
 
     [JSInvokable]
@@ -169,11 +169,11 @@
         enablePrivacyMode = configuration.GetValue<bool>("EnablePrivacyMode");
         dotNetObjectReference = DotNetObjectReference.Create(this);
 
-        await jsRuntime.InvokeVoidAsync("dialer.setDotNetObjectReference", dotNetObjectReference);
-        await jsRuntime.InvokeVoidAsync("dialer.setupTwilioEvents");
+        await js.InvokeVoidAsync("dialer.setDotNetObjectReference", dotNetObjectReference);
+        await js.InvokeVoidAsync("dialer.setupTwilioEvents");
 
         var jwtToken = await GetTwilioAuthenticationTokenAsync();
-        await jsRuntime.InvokeVoidAsync("dialer.setupTwilioDevice", jwtToken);
+        await js.InvokeVoidAsync("dialer.setupTwilioDevice", jwtToken);
     }
 
     private async Task<string> GetTwilioAuthenticationTokenAsync()
@@ -207,7 +207,7 @@
     // for now use IDisposable and fire and forget a task to call dialer.destroy
     public void Dispose()
     {
-        jsRuntime.InvokeVoidAsync("dialer.destroy");
+        js.InvokeVoidAsync("dialer.destroy");
         dotNetObjectReference?.Dispose();
     }
 }
