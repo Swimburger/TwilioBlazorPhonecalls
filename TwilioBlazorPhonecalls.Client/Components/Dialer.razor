@@ -1,7 +1,7 @@
 @using Microsoft.Extensions.Logging
 @using Microsoft.Extensions.Configuration
 @using System.Text.RegularExpressions
-@implements IDisposable
+@implements IAsyncDisposable
 @inject IConfiguration configuration
 @inject IJSRuntime js
 @inject ILogger<Dialer> logger
@@ -75,6 +75,7 @@
     private static readonly string dialKeys = "123456789*0#";
     private bool enablePrivacyMode = false;
     private DotNetObjectReference<Dialer> dotNetObjectReference;
+    private IJSObjectReference jsDialer;
     private bool showDialer = false;
     private string message = "";
     private string dialNumber = "";
@@ -88,20 +89,20 @@
 
     private async Task StartCall()
     {
-        await js.InvokeVoidAsync("dialer.startCall", dialNumber);
+        await jsDialer.InvokeVoidAsync("startCall", dialNumber);
     }
 
     private async Task EndCall()
     {
-        await js.InvokeVoidAsync("dialer.endCall");
+        await jsDialer.InvokeVoidAsync("endCall");
     }
 
     private async Task AcceptCall()
     {
-        await js.InvokeVoidAsync("dialer.acceptCall");
+        await jsDialer.InvokeVoidAsync("acceptCall");
     }
 
-    private async Task RejectCall()
+        private async Task RejectCall()
     {
         hasIncomingConnection = false;
         message = "";
@@ -128,6 +129,9 @@
     {
         isTwilioDeviceConnected = true;
         hasIncomingConnection = false;
+        if(enablePrivacyMode){
+            phoneNumber = MaskPhoneNumber(phoneNumber);
+        }
         message = $"Calling {phoneNumber}";
         StateHasChanged();
     }
@@ -145,10 +149,14 @@
     public void OnTwilioDeviceIncomingConnection(string phoneNumber)
     {
         hasIncomingConnection = true;
+        if(enablePrivacyMode){
+            phoneNumber = MaskPhoneNumber(phoneNumber);
+        }
         message = $"{phoneNumber} is calling you";
         StateHasChanged();
     }
 
+    
     [JSInvokable]
     public void OnTwilioDeviceCanceled()
     {
@@ -156,17 +164,18 @@
         message = "";
         StateHasChanged();
     }
-
+    
     protected override async Task OnInitializedAsync()
     {
         enablePrivacyMode = configuration.GetValue<bool>("EnablePrivacyMode");
         dotNetObjectReference = DotNetObjectReference.Create(this);
+        jsDialer = await js.InvokeAsync<IJSObjectReference>("createDialer");
 
-        await js.InvokeVoidAsync("dialer.setDotNetObjectReference", dotNetObjectReference);
-        await js.InvokeVoidAsync("dialer.setupTwilioEvents");
+        await jsDialer.InvokeVoidAsync("setDotNetObjectReference", dotNetObjectReference);
+        await jsDialer.InvokeVoidAsync("setupTwilioEvents");
         
         var jwtToken = await GetTwilioAuthenticationTokenAsync();
-        await js.InvokeVoidAsync("dialer.setupTwilioDevice", jwtToken);
+        await jsDialer.InvokeVoidAsync("setupTwilioDevice", jwtToken);
     }
 
     private async Task<string> GetTwilioAuthenticationTokenAsync()
@@ -196,11 +205,12 @@
         return phoneNumber;
     }
 
-    // IAsyncDisposable isn't supported in Blazor .NET Core 3.1, but will be in future versions
-    // for now use IDisposable and fire and forget a task to call dialer.destroy
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
-        js.InvokeVoidAsync("dialer.destroy");
+        if(jsDialer != null)
+        {
+            await jsDialer.InvokeVoidAsync("destroy");
+        }
         dotNetObjectReference?.Dispose();
     }
 }
