@@ -1,19 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30611.23
+# Visual Studio 15
+VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwilioBlazorPhonecalls.Client", "TwilioBlazorPhonecalls.Client\TwilioBlazorPhonecalls.Client.csproj", "{8C859C64-3806-482C-9313-9540032B018A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwilioBlazorPhonecalls.Server", "TwilioBlazorPhonecalls.Server\TwilioBlazorPhonecalls.Server.csproj", "{1C43E340-46CE-410D-9F4B-621C278ABF4A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwilioBlazorPhonecalls.Server", "TwilioBlazorPhonecalls.Server\TwilioBlazorPhonecalls.Server.csproj", "{284DF5C7-3304-4680-BA8A-C52BC2369943}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2F3AB9DC-3D21-4271-9C53-ABCE7C0C5EF2}"
-	ProjectSection(SolutionItems) = preProject
-		.gitignore = .gitignore
-		ConfigureSecrets.ps1 = ConfigureSecrets.ps1
-		CreateTwilioApplication.ps1 = CreateTwilioApplication.ps1
-		UpdateTwilioWebhooks.ps1 = UpdateTwilioWebhooks.ps1
-	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwilioBlazorPhonecalls.Client", "TwilioBlazorPhonecalls.Client\TwilioBlazorPhonecalls.Client.csproj", "{7C535644-58F1-4423-A4E5-2E3F771ACF2F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,36 +16,33 @@ Global
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
-	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{8C859C64-3806-482C-9313-9540032B018A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8C859C64-3806-482C-9313-9540032B018A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8C859C64-3806-482C-9313-9540032B018A}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{8C859C64-3806-482C-9313-9540032B018A}.Debug|x64.Build.0 = Debug|Any CPU
-		{8C859C64-3806-482C-9313-9540032B018A}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{8C859C64-3806-482C-9313-9540032B018A}.Debug|x86.Build.0 = Debug|Any CPU
-		{8C859C64-3806-482C-9313-9540032B018A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8C859C64-3806-482C-9313-9540032B018A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8C859C64-3806-482C-9313-9540032B018A}.Release|x64.ActiveCfg = Release|Any CPU
-		{8C859C64-3806-482C-9313-9540032B018A}.Release|x64.Build.0 = Release|Any CPU
-		{8C859C64-3806-482C-9313-9540032B018A}.Release|x86.ActiveCfg = Release|Any CPU
-		{8C859C64-3806-482C-9313-9540032B018A}.Release|x86.Build.0 = Release|Any CPU
-		{284DF5C7-3304-4680-BA8A-C52BC2369943}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{284DF5C7-3304-4680-BA8A-C52BC2369943}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{284DF5C7-3304-4680-BA8A-C52BC2369943}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{284DF5C7-3304-4680-BA8A-C52BC2369943}.Debug|x64.Build.0 = Debug|Any CPU
-		{284DF5C7-3304-4680-BA8A-C52BC2369943}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{284DF5C7-3304-4680-BA8A-C52BC2369943}.Debug|x86.Build.0 = Debug|Any CPU
-		{284DF5C7-3304-4680-BA8A-C52BC2369943}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{284DF5C7-3304-4680-BA8A-C52BC2369943}.Release|Any CPU.Build.0 = Release|Any CPU
-		{284DF5C7-3304-4680-BA8A-C52BC2369943}.Release|x64.ActiveCfg = Release|Any CPU
-		{284DF5C7-3304-4680-BA8A-C52BC2369943}.Release|x64.Build.0 = Release|Any CPU
-		{284DF5C7-3304-4680-BA8A-C52BC2369943}.Release|x86.ActiveCfg = Release|Any CPU
-		{284DF5C7-3304-4680-BA8A-C52BC2369943}.Release|x86.Build.0 = Release|Any CPU
-	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {FD197BF5-7E64-4C3C-9241-8D4DC8DEABFA}
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1C43E340-46CE-410D-9F4B-621C278ABF4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C43E340-46CE-410D-9F4B-621C278ABF4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C43E340-46CE-410D-9F4B-621C278ABF4A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{1C43E340-46CE-410D-9F4B-621C278ABF4A}.Debug|x64.Build.0 = Debug|Any CPU
+		{1C43E340-46CE-410D-9F4B-621C278ABF4A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1C43E340-46CE-410D-9F4B-621C278ABF4A}.Debug|x86.Build.0 = Debug|Any CPU
+		{1C43E340-46CE-410D-9F4B-621C278ABF4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C43E340-46CE-410D-9F4B-621C278ABF4A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C43E340-46CE-410D-9F4B-621C278ABF4A}.Release|x64.ActiveCfg = Release|Any CPU
+		{1C43E340-46CE-410D-9F4B-621C278ABF4A}.Release|x64.Build.0 = Release|Any CPU
+		{1C43E340-46CE-410D-9F4B-621C278ABF4A}.Release|x86.ActiveCfg = Release|Any CPU
+		{1C43E340-46CE-410D-9F4B-621C278ABF4A}.Release|x86.Build.0 = Release|Any CPU
+		{7C535644-58F1-4423-A4E5-2E3F771ACF2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C535644-58F1-4423-A4E5-2E3F771ACF2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C535644-58F1-4423-A4E5-2E3F771ACF2F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7C535644-58F1-4423-A4E5-2E3F771ACF2F}.Debug|x64.Build.0 = Debug|Any CPU
+		{7C535644-58F1-4423-A4E5-2E3F771ACF2F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7C535644-58F1-4423-A4E5-2E3F771ACF2F}.Debug|x86.Build.0 = Debug|Any CPU
+		{7C535644-58F1-4423-A4E5-2E3F771ACF2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C535644-58F1-4423-A4E5-2E3F771ACF2F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C535644-58F1-4423-A4E5-2E3F771ACF2F}.Release|x64.ActiveCfg = Release|Any CPU
+		{7C535644-58F1-4423-A4E5-2E3F771ACF2F}.Release|x64.Build.0 = Release|Any CPU
+		{7C535644-58F1-4423-A4E5-2E3F771ACF2F}.Release|x86.ActiveCfg = Release|Any CPU
+		{7C535644-58F1-4423-A4E5-2E3F771ACF2F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
