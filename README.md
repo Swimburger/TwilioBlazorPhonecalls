@@ -10,6 +10,7 @@ The application has been split up into two projects:
 Ideally the server would be split into two project, one for generating auth tokens and one for handling webhooks.
 This would allow you to host your auth server on a private network while stil exposing the webhooks publicly.
 To keep the demo simple, these two responsiblities have been rolled into one server project.
+You should also add authentication and authorization logic to the token endpoint so only the people that should be able to make calls can fetch the tokens.
 
 This project has been built using .NET Core 3.1, but an additional branch is available with [.NET 5 which uses the newly introduced capabilities](https://github.com/Swimburger/TwilioBlazorPhonecalls/tree/dotnet-5).
 
