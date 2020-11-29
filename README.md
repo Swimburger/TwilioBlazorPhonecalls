@@ -13,5 +13,7 @@ To keep the demo simple, these two responsiblities have been rolled into one ser
 
 This project has been built using .NET Core 3.1, but an additional branch is available with [.NET 5 which uses the newly introduced capabilities](https://github.com/Swimburger/TwilioBlazorPhonecalls/tree/dotnet-5).
 
+Another branch has been provided "[voice-mail-fallback](https://github.com/Swimburger/TwilioBlazorPhonecalls/tree/voice-mail-fallback)" incase you're interested in a graceful fallback in case nobody picks up the voice call. This fall back will read a message to the user and record the conversation as a voicemail.
+
 Here's a preview GIF of what the project looks like:
 ![Animated screenshot of the app showing the dialer in use!](./imgs/browser-call.gif "Animated screenshot of the app showing the dialer in use")
