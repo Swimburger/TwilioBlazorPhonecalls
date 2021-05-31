@@ -10,7 +10,7 @@ using Twilio.Jwt.AccessToken;
 namespace TwilioBlazorPhonecalls.Server.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("token")]
     public class TokenController : ControllerBase
     {
         private readonly IConfiguration configuration;
