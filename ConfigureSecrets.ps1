@@ -2,7 +2,7 @@ $TwilioAccountSid		= Read-Host 'Enter your Twilio Account SID'
 $TwilioPhoneNumber		= Read-Host 'Enter your Twilio phone number'
 $TwilioApiKey			= Read-Host 'Enter your Twilio API key'
 $TwilioApiSecret		= Read-Host 'Enter your Twilio API secret' -AsSecureString
-$TwiMLApplicationSid	= Read-Host 'Enter your TwiML Application SID'
+$TwiMLApplicationSid	        = Read-Host 'Enter your TwiML Application SID'
 
 $ProjectName = "TwilioBlazorPhonecalls.Server"
 dotnet user-secrets init --project $ProjectName
