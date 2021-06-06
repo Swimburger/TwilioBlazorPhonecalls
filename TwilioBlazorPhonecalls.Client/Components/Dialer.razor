@@ -15,7 +15,7 @@
         @onclick="@(() => showDialer = !showDialer)">
         @(showDialer ? "hide" : "show") phone <span class="oi oi-phone"></span>
     </button>
-    <p class="text-center text-light">@(message != "" ?message : "Standing by")</p>
+    <p class="text-center text-light">@(message != "" ? message : "Standing by")</p>
     <div class="input-group w-100 mb-3">
         <input 
             @bind="dialNumber" 
